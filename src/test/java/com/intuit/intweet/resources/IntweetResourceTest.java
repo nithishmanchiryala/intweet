@@ -5,7 +5,6 @@ import com.intuit.intweet.dao.repository.EmployeeRepository;
 import com.intuit.intweet.dao.repository.FollowerRepository;
 import com.intuit.intweet.dao.repository.TweetRepository;
 import com.intuit.intweet.exceptions.EmployeeNotFoundException;
-import com.intuit.intweet.exceptions.ErrorResponseUtil;
 import com.intuit.intweet.models.request.CreateTweetRequest;
 import com.intuit.intweet.models.response.Follower;
 import com.intuit.intweet.models.response.Tweet;
