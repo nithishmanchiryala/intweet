@@ -41,13 +41,19 @@ public class IntweetServiceImpl implements IntweetService {
     @HystrixCommand(fallbackMethod = "getLatestTweets_Fallback")
     public Tweets getLatestTweets(int offset, int limit) {
         Page<TweetsEntity> tweetsEntityList = intweetDaoService.findByCriteria(null, offset, limit);
-        List<Tweet> tweetList = tweetsEntityList.getContent().stream()
-                .map(TweetsEntityWrapper::new)
-                .map(tweetsEntityWrapper -> conversionService.convert(tweetsEntityWrapper, Tweet.class))
-                .collect(Collectors.toList());
-        Tweets tweets = new Tweets();
-        tweets.setTweets(tweetList);
-        return tweets;
+        return convertTweets(tweetsEntityList.getContent());
+    }
+
+    @Override
+    public Tweets getTweets(String employeeID, int offset, int limit) throws EmployeeNotFoundException {
+        getEmployee(employeeID);
+
+        List<FollowersEntity> followingEntityList = intweetDaoService.findAllByFollowingId(employeeID);
+        List<String> followingList = new ArrayList<>();
+        followingEntityList.forEach(e -> followingList.add(e.getFollowerId()));
+
+        List<TweetsEntity> tweetsEntityList = intweetDaoService.findTweetsByEmployeeIdIn(followingList, offset, limit);
+        return convertTweets(tweetsEntityList);
     }
 
     @Override
@@ -57,14 +63,7 @@ public class IntweetServiceImpl implements IntweetService {
         if (tweetsEntityList.isEmpty()) {
             ErrorResponseUtil.throwEmployeeNotFoundException(employeeID);
         }
-        List<Tweet> tweetList = tweetsEntityList.stream()
-                .map(TweetsEntityWrapper::new)
-                .map(tweetsEntityWrapper -> conversionService.convert(tweetsEntityWrapper, Tweet.class))
-                .collect(Collectors.toList());
-
-        Tweets tweets = new Tweets();
-        tweets.setTweets(tweetList);
-        return tweets;
+        return convertTweets(tweetsEntityList);
     }
 
     @Override
@@ -76,9 +75,9 @@ public class IntweetServiceImpl implements IntweetService {
     }
 
     @Override
-    public HttpStatus deleteTweet(int tweetID) {
+    public HttpStatus deleteTweet(String employeeID, int tweetID) {
         try {
-            intweetDaoService.deleteTweet(tweetID);
+            intweetDaoService.deleteTweet(employeeID, tweetID);
             return HttpStatus.NO_CONTENT;
         } catch (EmptyResultDataAccessException ex) {
             return HttpStatus.NOT_FOUND;
@@ -114,40 +113,57 @@ public class IntweetServiceImpl implements IntweetService {
 
     @Override
     public List<Follower> getFollowers(String employeeID) throws EmployeeNotFoundException {
-        EmployeesEntity employeesEntity = intweetDaoService.findEmployeeByEmployeeId(employeeID);
-        if (ObjectUtils.isEmpty(employeesEntity)) {
-            ErrorResponseUtil.throwEmployeeNotFoundException(employeeID);
-        }
-        List<FollowersEntity> followersEntityList = intweetDaoService.findAllByFollowerId(employeeID);
-        List<Follower> followers = new ArrayList<>();
-        for (FollowersEntity followersEntity : followersEntityList) {
+        getEmployee(employeeID);
+        EmployeesEntity employeesEntity;
+        List<FollowersEntity> entityList = intweetDaoService.findAllByFollowerId(employeeID);
+        List<Follower> resultList = new ArrayList<>();
+        for (FollowersEntity followersEntity : entityList) {
             employeesEntity = intweetDaoService.findEmployeeByEmployeeId(followersEntity.getEmployeeId());
-            Follower follower = new Follower();
-            follower.setEmployeeId(employeesEntity.getEmployeeId());
-            follower.setFirstName(employeesEntity.getFirstName());
-            follower.setLastName(employeesEntity.getLastName());
-            followers.add(follower);
+            Follower follower = setFollower(employeesEntity);
+            resultList.add(follower);
         }
-        return followers;
+        return resultList;
     }
 
     @Override
     public List<Follower> getFollowing(String employeeID) throws EmployeeNotFoundException {
+        getEmployee(employeeID);
+        EmployeesEntity employeesEntity;
+        List<FollowersEntity> entityList = intweetDaoService.findAllByFollowingId(employeeID);
+        List<Follower> resultList = new ArrayList<>();
+        for (FollowersEntity followingEntity : entityList) {
+            employeesEntity = intweetDaoService.findEmployeeByEmployeeId(followingEntity.getFollowerId());
+            Follower follower = setFollower(employeesEntity);
+            resultList.add(follower);
+        }
+        return resultList;
+    }
+
+
+    private void getEmployee(String employeeID) throws EmployeeNotFoundException {
         EmployeesEntity employeesEntity = intweetDaoService.findEmployeeByEmployeeId(employeeID);
         if (ObjectUtils.isEmpty(employeesEntity)) {
             ErrorResponseUtil.throwEmployeeNotFoundException(employeeID);
         }
-        List<FollowersEntity> followingEntityList = intweetDaoService.findAllByFollowingId(employeeID);
-        List<Follower> followingList = new ArrayList<>();
-        for (FollowersEntity followingEntity : followingEntityList) {
-            employeesEntity = intweetDaoService.findEmployeeByEmployeeId(followingEntity.getFollowerId());
-            Follower following = new Follower();
-            following.setEmployeeId(employeesEntity.getEmployeeId());
-            following.setFirstName(employeesEntity.getFirstName());
-            following.setLastName(employeesEntity.getLastName());
-            followingList.add(following);
-        }
-        return followingList;
+    }
+
+    private Tweets convertTweets(List<TweetsEntity> tweetsEntityList) {
+        List<Tweet> tweetList = tweetsEntityList.stream()
+                .map(TweetsEntityWrapper::new)
+                .map(tweetsEntityWrapper -> conversionService.convert(tweetsEntityWrapper, Tweet.class))
+                .collect(Collectors.toList());
+
+        Tweets tweets = new Tweets();
+        tweets.setTweets(tweetList);
+        return tweets;
+    }
+
+    private Follower setFollower(EmployeesEntity employeesEntity) {
+        Follower follower = new Follower();
+        follower.setEmployeeId(employeesEntity.getEmployeeId());
+        follower.setFirstName(employeesEntity.getFirstName());
+        follower.setLastName(employeesEntity.getLastName());
+        return follower;
     }
 
     @SuppressWarnings("unused")

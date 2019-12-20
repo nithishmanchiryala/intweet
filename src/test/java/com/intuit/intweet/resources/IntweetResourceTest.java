@@ -69,7 +69,7 @@ class IntweetResourceTest {
     }
 
     @Test
-    public void getEmployeeTweetsTest() throws EmployeeNotFoundException {
+    public void getEmployeeTweetsTest() {
         List<TweetsEntity> tweetsEntityList = new ArrayList<>();
         TweetsEntity tweetsEntity = new TweetsEntity();
         tweetsEntity.setTweetId(1234);
@@ -79,7 +79,7 @@ class IntweetResourceTest {
         tweetsEntity.setLastModifiedDatetime(new Date());
         tweetsEntityList.add(tweetsEntity);
         Mockito.when(tweetRepository.findByEmployeeId(Matchers.anyString(), Matchers.anyObject())).thenReturn(tweetsEntityList);
-        ResponseEntity<Tweets> tweetsResponseEntity = intweetResource.getEmployeeTweets(tweetsEntity.getEmployeeId(), 0, 5);
+        ResponseEntity<Tweets> tweetsResponseEntity = intweetResource.getMyTweets(tweetsEntity.getEmployeeId(), 0, 5);
         Assert.assertEquals(tweetsResponseEntity.getStatusCode(), HttpStatus.OK);
     }
 
@@ -87,7 +87,7 @@ class IntweetResourceTest {
     public void getEmployeeTweetsTest_Failure() {
         List<TweetsEntity> tweetsEntityList = new ArrayList<>();
         Mockito.when(tweetRepository.findByEmployeeId(Matchers.anyString(), Matchers.anyObject())).thenReturn(tweetsEntityList);
-        ResponseEntity<Tweets> tweetsResponseEntity = intweetResource.getEmployeeTweets("38473894", 0, 5);
+        ResponseEntity<Tweets> tweetsResponseEntity = intweetResource.getMyTweets("38473894", 0, 5);
         Assert.assertEquals(tweetsResponseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
@@ -116,14 +116,14 @@ class IntweetResourceTest {
     @Test
     public void deleteTweetTest() {
         Mockito.doNothing().when(tweetRepository).deleteById(isA(Integer.class));
-        ResponseEntity responseEntity = intweetResource.deleteTweet(1234);
+        ResponseEntity responseEntity = intweetResource.deleteTweet("1234", 4567);
         Assert.assertEquals(responseEntity.getStatusCode(), HttpStatus.NO_CONTENT);
     }
 
     @Test
     public void deleteTweetTest_fail() {
         Mockito.doThrow(EmptyResultDataAccessException.class).when(tweetRepository).deleteById(isA(Integer.class));
-        ResponseEntity responseEntity = intweetResource.deleteTweet(1234);
+        ResponseEntity responseEntity = intweetResource.deleteTweet("32873", 1234);
         Assert.assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
@@ -132,6 +132,13 @@ class IntweetResourceTest {
         FollowersEntity followersEntity = new FollowersEntity();
         Mockito.when(followerRepository.save(Matchers.anyObject())).thenReturn(followersEntity);
         ResponseEntity responseEntity = intweetResource.followEmployee("1234", "1234");
+        Assert.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+    }
+
+    @Test
+    public void unfollowEmployeeTest() {
+        Mockito.doNothing().when(followerRepository).deleteById(isA(FollowersEntityPK.class));
+        ResponseEntity responseEntity = intweetResource.unfollowEmployee("1234", "1234");
         Assert.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
     }
 
@@ -160,6 +167,28 @@ class IntweetResourceTest {
         Mockito.when(followerRepository.findByFollowerId(Matchers.anyString())).thenReturn(Arrays.asList(followersEntity));
         Mockito.when(employeeRepository.findByEmployeeId(Matchers.anyString())).thenReturn(employeesEntity);
         ResponseEntity responseEntity = intweetResource.getFollowers("1234");
+        Assert.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        Assert.assertNotNull(responseEntity.getBody());
+    }
+
+    @Test
+    public void getFollowingTest() {
+        FollowersEntity followersEntity = new FollowersEntity();
+        followersEntity.setUidpk(1);
+        followersEntity.setFollowerId("1234");
+        followersEntity.setEmployeeId("2345");
+        followersEntity.setCreatedDatetime(new Date());
+        TweetsEntity tweetsEntity = new TweetsEntity();
+        CreateTweetRequest createTweetRequest = new CreateTweetRequest();
+        createTweetRequest.setEmployeeId("1234");
+        createTweetRequest.setTweet("helloworld");
+        EmployeesEntity employeesEntity = new EmployeesEntity();
+        employeesEntity.setEmployeeId("1234");
+        employeesEntity.setFollowersByEmployeeId(Arrays.asList(followersEntity));
+        employeesEntity.setTweetsByEmployeeId(Arrays.asList(tweetsEntity));
+        Mockito.when(followerRepository.findByEmployeeId(Matchers.anyString())).thenReturn(Arrays.asList(followersEntity));
+        Mockito.when(employeeRepository.findByEmployeeId(Matchers.anyString())).thenReturn(employeesEntity);
+        ResponseEntity responseEntity = intweetResource.getFollowing("1234");
         Assert.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         Assert.assertNotNull(responseEntity.getBody());
     }

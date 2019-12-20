@@ -17,13 +17,15 @@ public interface IntweetDaoService {
 
     List<FollowersEntity> findAllByFollowingId(String employeeId);
 
+    List<TweetsEntity> findTweetsByEmployeeIdIn(List<String> employeeIds, int offset, int limit);
+
     List<TweetsEntity> findTweetsByEmployeeId(String employeeId, int offset, int limit);
 
     Page<TweetsEntity> findByCriteria(Specification<TweetsEntity> specification, int offset, int limit);
 
     TweetsEntity saveTweet(TweetsEntity tweetsEntity);
 
-    void deleteTweet(int tweetId);
+    void deleteTweet(String employeeID, int tweetId);
 
     FollowersEntity saveFollowersEntity(FollowersEntity followersEntity);
 

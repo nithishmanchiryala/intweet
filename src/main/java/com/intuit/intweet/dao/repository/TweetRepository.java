@@ -13,4 +13,6 @@ public interface TweetRepository extends CrudRepository<TweetsEntity, Integer>,
         JpaSpecificationExecutor<TweetsEntity> {
 
     List<TweetsEntity> findByEmployeeId(String employeeId, Pageable pageable);
+
+    List<TweetsEntity> findByEmployeeIdIn(List<String> employeeIds, Pageable pageable);
 }

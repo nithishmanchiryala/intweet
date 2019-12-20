@@ -13,11 +13,13 @@ public interface IntweetService {
 
     Tweets getLatestTweets(int offset, int limit);
 
+    Tweets getTweets(String employeeID, int offset, int limit) throws EmployeeNotFoundException;
+
     Tweets getEmployeeTweets(String employeeID, int offset, int limit) throws EmployeeNotFoundException;
 
     Tweet postTweet(CreateTweetRequest createTweetRequest);
 
-    HttpStatus deleteTweet(int tweetID);
+    HttpStatus deleteTweet(String employeeID, int tweetID);
 
     HttpStatus followEmployee(String employeeID, String followerID);
 

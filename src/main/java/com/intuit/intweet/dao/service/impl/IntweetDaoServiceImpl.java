@@ -46,14 +46,20 @@ public class IntweetDaoServiceImpl implements IntweetDaoService {
     }
 
     @Override
+    public List<TweetsEntity> findTweetsByEmployeeIdIn(List<String> employeeIds, int offset, int limit) {
+        Pageable paging = getPageable(offset, limit);
+        return tweetRepository.findByEmployeeIdIn(employeeIds, paging);
+    }
+
+    @Override
     public List<TweetsEntity> findTweetsByEmployeeId(String employeeId, int offset, int limit) {
-        Pageable paging = PageRequest.of(offset, limit, Sort.Direction.DESC, "createdDatetime");
+        Pageable paging = getPageable(offset, limit);
         return tweetRepository.findByEmployeeId(employeeId, paging);
     }
 
     @Override
     public Page<TweetsEntity> findByCriteria(Specification<TweetsEntity> specification, int offset, int limit) {
-        Pageable paging = PageRequest.of(offset, limit, Sort.Direction.DESC, "createdDatetime");
+        Pageable paging = getPageable(offset, limit);
         return tweetRepository.findAll(specification, paging);
     }
 
@@ -63,7 +69,7 @@ public class IntweetDaoServiceImpl implements IntweetDaoService {
     }
 
     @Override
-    public void deleteTweet(int tweetId) {
+    public void deleteTweet(String employeeID, int tweetId) {
         tweetRepository.deleteById(tweetId);
     }
 
@@ -75,6 +81,10 @@ public class IntweetDaoServiceImpl implements IntweetDaoService {
     @Override
     public void deleteFollower(FollowersEntityPK followersEntityPK) {
         followerRepository.deleteById(followersEntityPK);
+    }
+
+    private Pageable getPageable(int offset, int limit) {
+        return PageRequest.of(offset, limit, Sort.Direction.DESC, "lastModifiedDatetime");
     }
 
 }

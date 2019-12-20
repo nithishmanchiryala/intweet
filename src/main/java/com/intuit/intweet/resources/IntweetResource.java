@@ -30,7 +30,16 @@ public class IntweetResource {
     }
 
     @GetMapping("/feed/{employeeID}")
-    public ResponseEntity<Tweets> getEmployeeTweets(@PathVariable String employeeID, @RequestParam int offset, @RequestParam int limit) {
+    public ResponseEntity<Tweets> getTweets(@PathVariable String employeeID, @RequestParam int offset, @RequestParam int limit) {
+        try {
+            return new ResponseEntity<>(intweetService.getTweets(employeeID, offset, limit), HttpStatus.OK);
+        } catch (EmployeeNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/feed/me/{employeeID}")
+    public ResponseEntity<Tweets> getMyTweets(@PathVariable String employeeID, @RequestParam int offset, @RequestParam int limit) {
         try {
             return new ResponseEntity<>(intweetService.getEmployeeTweets(employeeID, offset, limit), HttpStatus.OK);
         } catch (EmployeeNotFoundException e) {
@@ -43,9 +52,9 @@ public class IntweetResource {
         return new ResponseEntity<>(intweetService.postTweet(createTweetRequest), HttpStatus.OK);
     }
 
-    @DeleteMapping("/feed/{tweetID}")
-    public ResponseEntity deleteTweet(@PathVariable int tweetID) {
-        HttpStatus httpStatus = intweetService.deleteTweet(tweetID);
+    @DeleteMapping("/feed/{employeeID}/{tweetID}")
+    public ResponseEntity deleteTweet(@PathVariable String employeeID, @PathVariable int tweetID) {
+        HttpStatus httpStatus = intweetService.deleteTweet(employeeID, tweetID);
         return new ResponseEntity<>(httpStatus);
     }
 
