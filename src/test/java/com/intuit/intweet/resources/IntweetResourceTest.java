@@ -59,7 +59,6 @@ class IntweetResourceTest {
         tweetsEntity.setEmployeeId("485739857");
         tweetsEntity.setCreatedDatetime(new Date());
         tweetsEntity.setLastModifiedDatetime(new Date());
-        tweetsEntity.setTweetResponsesByTweetId(Arrays.asList(new TweetResponsesEntity()));
         final Page<TweetsEntity> page = new PageImpl(Arrays.asList(tweetsEntity));
 
         Mockito.when(tweetRepository.findAll(Matchers.anyObject(), (Pageable) Matchers.anyObject())).thenReturn(page);
@@ -107,21 +106,21 @@ class IntweetResourceTest {
         tweetsEntity.setCreatedDatetime(new Date());
         tweetsEntity.setLastModifiedDatetime(new Date());
         Mockito.when(tweetRepository.save(tweetsEntity)).thenReturn(tweetsEntity);
-        ResponseEntity<Tweet> tweetsResponseEntity = intweetResource.createTweet(createTweetRequest);
+        ResponseEntity<Tweet> tweetsResponseEntity = intweetResource.createOrUpdateTweet(createTweetRequest, "1234");
         Assert.assertEquals(tweetsResponseEntity.getStatusCode(), HttpStatus.OK);
         Assert.assertEquals(Objects.requireNonNull(tweetsResponseEntity.getBody()).getEmployeeId(), createTweetRequest.getEmployeeId());
     }
 
     @Test
     public void deleteTweetTest() {
-        Mockito.doNothing().when(tweetRepository).deleteById(isA(Integer.class));
+        Mockito.doNothing().when(tweetRepository).deleteById(isA(TweetsEntityPK.class));
         ResponseEntity responseEntity = intweetResource.deleteTweet("1234", 4567);
         Assert.assertEquals(responseEntity.getStatusCode(), HttpStatus.NO_CONTENT);
     }
 
     @Test
     public void deleteTweetTest_fail() {
-        Mockito.doThrow(EmptyResultDataAccessException.class).when(tweetRepository).deleteById(isA(Integer.class));
+        Mockito.doThrow(EmptyResultDataAccessException.class).when(tweetRepository).deleteById(isA(TweetsEntityPK.class));
         ResponseEntity responseEntity = intweetResource.deleteTweet("32873", 1234);
         Assert.assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
     }
@@ -151,7 +150,6 @@ class IntweetResourceTest {
     @Test
     public void getFollowersTest() {
         FollowersEntity followersEntity = new FollowersEntity();
-        followersEntity.setUidpk(1);
         followersEntity.setFollowerId("1234");
         followersEntity.setEmployeeId("2345");
         followersEntity.setCreatedDatetime(new Date());
@@ -173,7 +171,6 @@ class IntweetResourceTest {
     @Test
     public void getFollowingTest() {
         FollowersEntity followersEntity = new FollowersEntity();
-        followersEntity.setUidpk(1);
         followersEntity.setFollowerId("1234");
         followersEntity.setEmployeeId("2345");
         followersEntity.setCreatedDatetime(new Date());

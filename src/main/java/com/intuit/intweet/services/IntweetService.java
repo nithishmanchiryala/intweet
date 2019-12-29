@@ -3,7 +3,6 @@ package com.intuit.intweet.services;
 import com.intuit.intweet.exceptions.EmployeeNotFoundException;
 import com.intuit.intweet.models.request.CreateTweetRequest;
 import com.intuit.intweet.models.response.Follower;
-import com.intuit.intweet.models.response.Tweet;
 import com.intuit.intweet.models.response.Tweets;
 import org.springframework.http.HttpStatus;
 
@@ -17,7 +16,7 @@ public interface IntweetService {
 
     Tweets getEmployeeTweets(String employeeID, int offset, int limit) throws EmployeeNotFoundException;
 
-    Tweet postTweet(CreateTweetRequest createTweetRequest);
+    HttpStatus postTweet(CreateTweetRequest createTweetRequest, String tweetID);
 
     HttpStatus deleteTweet(String employeeID, int tweetID);
 

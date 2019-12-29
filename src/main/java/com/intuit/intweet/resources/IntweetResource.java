@@ -3,7 +3,6 @@ package com.intuit.intweet.resources;
 import com.intuit.intweet.exceptions.EmployeeNotFoundException;
 import com.intuit.intweet.models.request.CreateTweetRequest;
 import com.intuit.intweet.models.response.Follower;
-import com.intuit.intweet.models.response.Tweet;
 import com.intuit.intweet.models.response.Tweets;
 import com.intuit.intweet.services.IntweetService;
 import org.apache.logging.log4j.LogManager;
@@ -48,8 +47,10 @@ public class IntweetResource {
     }
 
     @PostMapping("/feed")
-    public ResponseEntity<Tweet> createTweet(@Valid @RequestBody CreateTweetRequest createTweetRequest) {
-        return new ResponseEntity<>(intweetService.postTweet(createTweetRequest), HttpStatus.OK);
+    public ResponseEntity createOrUpdateTweet(@Valid @RequestBody CreateTweetRequest createTweetRequest,
+                                      @RequestParam(required = false) String tweetID) {
+        HttpStatus httpStatus = intweetService.postTweet(createTweetRequest, tweetID);
+        return new ResponseEntity<>(httpStatus);
     }
 
     @DeleteMapping("/feed/{employeeID}/{tweetID}")

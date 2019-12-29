@@ -1,29 +1,36 @@
 package com.intuit.intweet.dao.entity;
 
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "tweets", schema = "intweet", catalog = "")
-public class TweetsEntity {
+@IdClass(TweetsEntityPK.class)
+public class TweetsEntity implements Serializable {
+
+    @Id
     private int tweetId;
+    @Id
     private String employeeId;
+    @Column(name = "tweet", nullable = false, length = 500)
     private String tweet;
+    @Column(name = "created_datetime", updatable = false)
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdDatetime;
+    @Column(name = "last_modified_datetime")
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
     private Date lastModifiedDatetime;
-    private List<TweetResponsesEntity> tweetResponsesByTweetId;
 
     public TweetsEntity() {
     }
 
-    @Id
-    @Column(name = "tweet_id", nullable = false, length = 20)
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
     public int getTweetId() {
         return tweetId;
     }
@@ -32,8 +39,6 @@ public class TweetsEntity {
         this.tweetId = tweetId;
     }
 
-    @Basic
-    @Column(name = "employee_id", nullable = false, length = 20)
     public String getEmployeeId() {
         return employeeId;
     }
@@ -42,8 +47,6 @@ public class TweetsEntity {
         this.employeeId = employeeId;
     }
 
-    @Basic
-    @Column(name = "tweet", nullable = false, length = 500)
     public String getTweet() {
         return tweet;
     }
@@ -52,8 +55,6 @@ public class TweetsEntity {
         this.tweet = tweet;
     }
 
-    @Basic
-    @Column(name = "created_datetime", nullable = false)
     public Date getCreatedDatetime() {
         return createdDatetime;
     }
@@ -62,8 +63,6 @@ public class TweetsEntity {
         this.createdDatetime = createdDatetime;
     }
 
-    @Basic
-    @Column(name = "last_modified_datetime", nullable = false)
     public Date getLastModifiedDatetime() {
         return lastModifiedDatetime;
     }
@@ -87,15 +86,5 @@ public class TweetsEntity {
     @Override
     public int hashCode() {
         return Objects.hash(tweetId, employeeId, tweet, createdDatetime, lastModifiedDatetime);
-    }
-
-    @Transient
-    @OneToMany(mappedBy = "employees", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    public List<TweetResponsesEntity> getTweetResponsesByTweetId() {
-        return tweetResponsesByTweetId;
-    }
-
-    public void setTweetResponsesByTweetId(List<TweetResponsesEntity> tweetResponsesByTweetId) {
-        this.tweetResponsesByTweetId = tweetResponsesByTweetId;
     }
 }

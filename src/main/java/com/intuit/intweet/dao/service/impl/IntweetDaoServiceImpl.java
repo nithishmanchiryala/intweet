@@ -1,9 +1,6 @@
 package com.intuit.intweet.dao.service.impl;
 
-import com.intuit.intweet.dao.entity.EmployeesEntity;
-import com.intuit.intweet.dao.entity.FollowersEntity;
-import com.intuit.intweet.dao.entity.FollowersEntityPK;
-import com.intuit.intweet.dao.entity.TweetsEntity;
+import com.intuit.intweet.dao.entity.*;
 import com.intuit.intweet.dao.repository.EmployeeRepository;
 import com.intuit.intweet.dao.repository.FollowerRepository;
 import com.intuit.intweet.dao.repository.TweetRepository;
@@ -64,18 +61,18 @@ public class IntweetDaoServiceImpl implements IntweetDaoService {
     }
 
     @Override
-    public TweetsEntity saveTweet(TweetsEntity tweetsEntity) {
-        return tweetRepository.save(tweetsEntity);
+    public void saveTweet(TweetsEntity tweetsEntity) {
+        tweetRepository.save(tweetsEntity);
     }
 
     @Override
-    public void deleteTweet(String employeeID, int tweetId) {
-        tweetRepository.deleteById(tweetId);
+    public void deleteTweet(TweetsEntityPK tweetsEntityPK) {
+        tweetRepository.deleteById(tweetsEntityPK);
     }
 
     @Override
-    public FollowersEntity saveFollowersEntity(FollowersEntity followersEntity) {
-        return followerRepository.save(followersEntity);
+    public void saveFollowersEntity(FollowersEntity followersEntity) {
+        followerRepository.save(followersEntity);
     }
 
     @Override

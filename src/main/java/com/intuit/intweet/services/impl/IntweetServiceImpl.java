@@ -1,9 +1,6 @@
 package com.intuit.intweet.services.impl;
 
-import com.intuit.intweet.dao.entity.EmployeesEntity;
-import com.intuit.intweet.dao.entity.FollowersEntity;
-import com.intuit.intweet.dao.entity.FollowersEntityPK;
-import com.intuit.intweet.dao.entity.TweetsEntity;
+import com.intuit.intweet.dao.entity.*;
 import com.intuit.intweet.dao.service.IntweetDaoService;
 import com.intuit.intweet.dto.TweetsEntityWrapper;
 import com.intuit.intweet.exceptions.EmployeeNotFoundException;
@@ -14,6 +11,7 @@ import com.intuit.intweet.models.response.Tweet;
 import com.intuit.intweet.models.response.Tweets;
 import com.intuit.intweet.services.IntweetService;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -67,17 +65,28 @@ public class IntweetServiceImpl implements IntweetService {
     }
 
     @Override
-    public Tweet postTweet(CreateTweetRequest createTweetRequest) {
-        TweetsEntity tweetsEntity = conversionService.convert(createTweetRequest, TweetsEntity.class);
-        TweetsEntityWrapper tweetsEntityWrapper = new TweetsEntityWrapper(tweetsEntity);
-        intweetDaoService.saveTweet(tweetsEntity);
-        return conversionService.convert(tweetsEntityWrapper, Tweet.class);
+    public HttpStatus postTweet(CreateTweetRequest createTweetRequest, String tweetID) {
+        try {
+            TweetsEntity tweetsEntity = new TweetsEntity();
+            tweetsEntity.setEmployeeId(createTweetRequest.getEmployeeId());
+            tweetsEntity.setTweet(createTweetRequest.getTweet());
+            if (StringUtils.isNotBlank(tweetID)) {
+                tweetsEntity.setTweetId(Integer.parseInt(tweetID));
+            }
+            intweetDaoService.saveTweet(tweetsEntity);
+            return HttpStatus.OK;
+        } catch (DataIntegrityViolationException ex) {
+            return HttpStatus.BAD_REQUEST;
+        }
     }
 
     @Override
     public HttpStatus deleteTweet(String employeeID, int tweetID) {
         try {
-            intweetDaoService.deleteTweet(employeeID, tweetID);
+            TweetsEntityPK tweetsEntityPK = new TweetsEntityPK();
+            tweetsEntityPK.setEmployeeId(employeeID);
+            tweetsEntityPK.setTweetId(tweetID);
+            intweetDaoService.deleteTweet(tweetsEntityPK);
             return HttpStatus.NO_CONTENT;
         } catch (EmptyResultDataAccessException ex) {
             return HttpStatus.NOT_FOUND;

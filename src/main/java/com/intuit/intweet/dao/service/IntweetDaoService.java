@@ -1,9 +1,6 @@
 package com.intuit.intweet.dao.service;
 
-import com.intuit.intweet.dao.entity.EmployeesEntity;
-import com.intuit.intweet.dao.entity.FollowersEntity;
-import com.intuit.intweet.dao.entity.FollowersEntityPK;
-import com.intuit.intweet.dao.entity.TweetsEntity;
+import com.intuit.intweet.dao.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -23,11 +20,11 @@ public interface IntweetDaoService {
 
     Page<TweetsEntity> findByCriteria(Specification<TweetsEntity> specification, int offset, int limit);
 
-    TweetsEntity saveTweet(TweetsEntity tweetsEntity);
+    void saveTweet(TweetsEntity tweetsEntity);
 
-    void deleteTweet(String employeeID, int tweetId);
+    void deleteTweet(TweetsEntityPK tweetsEntityPK);
 
-    FollowersEntity saveFollowersEntity(FollowersEntity followersEntity);
+    void saveFollowersEntity(FollowersEntity followersEntity);
 
     void deleteFollower(FollowersEntityPK followersEntityPK);
 
