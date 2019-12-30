@@ -1,0 +1,11 @@
+version: 0.2
+phases:
+  build:
+    commands:
+      - mvn clean prepare-package war:exploded
+  post_build:
+    commands:
+      - mv target/deploy ./
+artifacts:
+  files:
+    - deploy/**/*
