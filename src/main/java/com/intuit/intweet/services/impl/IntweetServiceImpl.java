@@ -99,7 +99,6 @@ public class IntweetServiceImpl implements IntweetService {
             FollowersEntity followersEntity = new FollowersEntity();
             followersEntity.setEmployeeId(employeeID);
             followersEntity.setFollowerId(followerID);
-            followersEntity.setCreatedDatetime(new Date());
             intweetDaoService.saveFollowersEntity(followersEntity);
             return HttpStatus.OK;
         } catch (DataIntegrityViolationException ex) {

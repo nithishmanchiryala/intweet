@@ -106,7 +106,6 @@ class IntweetResourceTest {
         FollowersEntity followersEntity = new FollowersEntity();
         followersEntity.setEmployeeId("24343");
         followersEntity.setFollowerId("65767");
-        followersEntity.setCreatedDatetime(new Date());
         followersEntityList.add(followersEntity);
         Mockito.when(employeeRepository.findByEmployeeId(anyString())).thenReturn(employeesEntity);
         Mockito.when(tweetRepository.findByEmployeeId(anyString(), Matchers.anyObject())).thenReturn(tweetsEntityList);
@@ -219,7 +218,6 @@ class IntweetResourceTest {
         FollowersEntity followersEntity = new FollowersEntity();
         followersEntity.setFollowerId("1234");
         followersEntity.setEmployeeId("2345");
-        followersEntity.setCreatedDatetime(new Date());
         TweetsEntity tweetsEntity = new TweetsEntity();
         CreateTweetRequest createTweetRequest = new CreateTweetRequest();
         createTweetRequest.setEmployeeId("1234");
@@ -240,7 +238,6 @@ class IntweetResourceTest {
         FollowersEntity followersEntity = new FollowersEntity();
         followersEntity.setFollowerId("1234");
         followersEntity.setEmployeeId("2345");
-        followersEntity.setCreatedDatetime(new Date());
         TweetsEntity tweetsEntity = new TweetsEntity();
         CreateTweetRequest createTweetRequest = new CreateTweetRequest();
         createTweetRequest.setEmployeeId("1234");

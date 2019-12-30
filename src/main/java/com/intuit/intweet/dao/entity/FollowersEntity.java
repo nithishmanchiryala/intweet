@@ -1,7 +1,6 @@
 package com.intuit.intweet.dao.entity;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Table(name = "followers", schema = "intweet", catalog = "")
@@ -11,8 +10,6 @@ public class FollowersEntity {
     private String employeeId;
     @Id
     private String followerId;
-    @Column(name = "created_datetime", nullable = false)
-    private Date createdDatetime;
 
     public FollowersEntity() {
 
@@ -32,14 +29,6 @@ public class FollowersEntity {
 
     public void setFollowerId(String followerId) {
         this.followerId = followerId;
-    }
-
-    public Date getCreatedDatetime() {
-        return createdDatetime;
-    }
-
-    public void setCreatedDatetime(Date createdDatetime) {
-        this.createdDatetime = createdDatetime;
     }
 
 }
