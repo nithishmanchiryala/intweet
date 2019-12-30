@@ -98,12 +98,6 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.2</version>
 				<configuration>
-					<excludes>
-						<!-- Exclude full package from test coverage -->
-						<exclude>**/*com/intuit/intweet/dao/entity/**</exclude>
-						<!-- Exclude class from test coverage -->
-						<exclude>**/*com/intuit/intweet/IntweetApplication.class</exclude>
-					</excludes>
 				</configuration>
 				<executions>
 					<execution>

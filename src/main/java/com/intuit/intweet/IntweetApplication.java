@@ -1,6 +1,5 @@
 package com.intuit.intweet;
 
-import com.intuit.intweet.converters.CreateTweetConverter;
 import com.intuit.intweet.converters.TweetConverter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -31,9 +30,7 @@ public class IntweetApplication {
 
 	private Set<Converter<?, ?>> getConverters() {
 		Set<Converter<?, ?>> converters = new HashSet<>();
-		converters.add(new CreateTweetConverter());
 		converters.add(new TweetConverter());
 		return converters;
 	}
-
 }
