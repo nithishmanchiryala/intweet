@@ -2,11 +2,8 @@ package com.intuit.intweet.services;
 
 import com.intuit.intweet.exceptions.CustomException;
 import com.intuit.intweet.models.request.CreateTweetRequest;
-import com.intuit.intweet.models.response.Follower;
 import com.intuit.intweet.models.response.Followers;
 import com.intuit.intweet.models.response.Tweets;
-
-import java.util.List;
 
 public interface IntweetService {
 
@@ -24,7 +21,7 @@ public interface IntweetService {
 
     void unfollowEmployee(String employeeID, String followerID) throws CustomException;
 
-    List<Follower> getFollowers(String employeeID) throws CustomException;
+    Followers getFollowers(String employeeID) throws CustomException;
 
     Followers getFollowing(String employeeID) throws CustomException;
 }

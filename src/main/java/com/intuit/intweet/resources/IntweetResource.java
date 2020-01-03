@@ -2,7 +2,6 @@ package com.intuit.intweet.resources;
 
 import com.intuit.intweet.exceptions.CustomException;
 import com.intuit.intweet.models.request.CreateTweetRequest;
-import com.intuit.intweet.models.response.Follower;
 import com.intuit.intweet.models.response.Followers;
 import com.intuit.intweet.models.response.Tweets;
 import com.intuit.intweet.services.IntweetService;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 public class IntweetResource {
@@ -49,7 +47,7 @@ public class IntweetResource {
     }
 
     @GetMapping("/followers/{employeeID}")
-    public List<Follower> getFollowers(@PathVariable String employeeID) throws CustomException {
+    public Followers getFollowers(@PathVariable String employeeID) throws CustomException {
         return intweetService.getFollowers(employeeID);
 
     }

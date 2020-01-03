@@ -124,17 +124,19 @@ public class IntweetServiceImpl implements IntweetService {
     }
 
     @Override
-    public List<Follower> getFollowers(String employeeID) throws CustomException {
+    public Followers getFollowers(String employeeID) throws CustomException {
         getEmployee(employeeID);
         EmployeesEntity employeesEntity;
         List<FollowersEntity> entityList = intweetDaoService.findAllByFollowerId(employeeID);
+        Followers followers = new Followers();
         List<Follower> resultList = new ArrayList<>();
         for (FollowersEntity followersEntity : entityList) {
             employeesEntity = intweetDaoService.findEmployeeByEmployeeId(followersEntity.getEmployeeId());
             Follower follower = setFollower(employeesEntity);
             resultList.add(follower);
         }
-        return resultList;
+        followers.setFollowers(resultList);
+        return followers;
     }
 
     @Override
@@ -143,14 +145,14 @@ public class IntweetServiceImpl implements IntweetService {
         EmployeesEntity employeesEntity;
         List<FollowersEntity> entityList = intweetDaoService.findAllByFollowingId(employeeID);
         List<Follower> resultList = new ArrayList<>();
-        Followers followers = new Followers();
+        Followers following = new Followers();
         for (FollowersEntity followingEntity : entityList) {
             employeesEntity = intweetDaoService.findEmployeeByEmployeeId(followingEntity.getFollowerId());
             Follower follower = setFollower(employeesEntity);
             resultList.add(follower);
         }
-        followers.setFollowers(resultList);
-        return followers;
+        following.setFollowers(resultList);
+        return following;
     }
 
 

@@ -245,7 +245,7 @@ class IntweetResourceTest {
         employeesEntity.setTweetsByEmployeeId(Arrays.asList(tweetsEntity));
         Mockito.when(followerRepository.findByFollowerId(anyString())).thenReturn(Arrays.asList(followersEntity));
         Mockito.when(employeeRepository.findByEmployeeId(anyString())).thenReturn(employeesEntity);
-        List<Follower> followers = intweetResource.getFollowers("1234");
+        Followers followers = intweetResource.getFollowers("1234");
         Assert.assertNotNull(followers);
     }
 
