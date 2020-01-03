@@ -82,13 +82,13 @@ DROP TABLE IF EXISTS `tweets`;
 CREATE TABLE `tweets` (
   `tweet_id` int(11) NOT NULL AUTO_INCREMENT,
   `employee_id` varchar(20) NOT NULL,
-  `tweet` varchar(20) NOT NULL,
+  `tweet` varchar(200) NOT NULL,
   `created_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_modified_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`tweet_id`,`employee_id`),
   KEY `employee_fk_3_idx` (`employee_id`),
   CONSTRAINT `employee_fk` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
