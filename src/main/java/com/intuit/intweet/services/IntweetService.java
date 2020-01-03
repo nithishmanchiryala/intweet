@@ -1,10 +1,10 @@
 package com.intuit.intweet.services;
 
-import com.intuit.intweet.exceptions.EmployeeNotFoundException;
+import com.intuit.intweet.exceptions.CustomException;
 import com.intuit.intweet.models.request.CreateTweetRequest;
 import com.intuit.intweet.models.response.Follower;
+import com.intuit.intweet.models.response.Followers;
 import com.intuit.intweet.models.response.Tweets;
-import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -12,19 +12,19 @@ public interface IntweetService {
 
     Tweets getLatestTweets(int offset, int limit);
 
-    Tweets getTweets(String employeeID, int offset, int limit) throws EmployeeNotFoundException;
+    Tweets getTweets(String employeeID, int offset, int limit) throws CustomException;
 
-    Tweets getEmployeeTweets(String employeeID, int offset, int limit) throws EmployeeNotFoundException;
+    Tweets getEmployeeTweets(String employeeID, int offset, int limit) throws CustomException;
 
-    HttpStatus postTweet(CreateTweetRequest createTweetRequest, String tweetID);
+    void postTweet(CreateTweetRequest createTweetRequest, String tweetID) throws CustomException;
 
-    HttpStatus deleteTweet(String employeeID, int tweetID);
+    void deleteTweet(String employeeID, int tweetID) throws CustomException;
 
-    HttpStatus followEmployee(String employeeID, String followerID);
+    void followEmployee(String employeeID, String followerID) throws CustomException;
 
-    HttpStatus unfollowEmployee(String employeeID, String followerID);
+    void unfollowEmployee(String employeeID, String followerID) throws CustomException;
 
-    List<Follower> getFollowers(String employeeID) throws EmployeeNotFoundException;
+    List<Follower> getFollowers(String employeeID) throws CustomException;
 
-    List<Follower> getFollowing(String employeeID) throws EmployeeNotFoundException;
+    Followers getFollowing(String employeeID) throws CustomException;
 }

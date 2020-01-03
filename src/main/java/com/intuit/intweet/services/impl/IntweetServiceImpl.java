@@ -3,10 +3,11 @@ package com.intuit.intweet.services.impl;
 import com.intuit.intweet.dao.entity.*;
 import com.intuit.intweet.dao.service.IntweetDaoService;
 import com.intuit.intweet.dto.TweetsEntityWrapper;
-import com.intuit.intweet.exceptions.EmployeeNotFoundException;
-import com.intuit.intweet.exceptions.ErrorResponseUtil;
+import com.intuit.intweet.exceptions.CustomException;
+import com.intuit.intweet.exceptions.ExceptionThrower;
 import com.intuit.intweet.models.request.CreateTweetRequest;
 import com.intuit.intweet.models.response.Follower;
+import com.intuit.intweet.models.response.Followers;
 import com.intuit.intweet.models.response.Tweet;
 import com.intuit.intweet.models.response.Tweets;
 import com.intuit.intweet.services.IntweetService;
@@ -17,12 +18,10 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +42,7 @@ public class IntweetServiceImpl implements IntweetService {
     }
 
     @Override
-    public Tweets getTweets(String employeeID, int offset, int limit) throws EmployeeNotFoundException {
+    public Tweets getTweets(String employeeID, int offset, int limit) throws CustomException {
         getEmployee(employeeID);
 
         List<FollowersEntity> followingEntityList = intweetDaoService.findAllByFollowingId(employeeID);
@@ -55,17 +54,18 @@ public class IntweetServiceImpl implements IntweetService {
     }
 
     @Override
-    public Tweets getEmployeeTweets(String employeeID, int offset, int limit) throws EmployeeNotFoundException {
+    public Tweets getEmployeeTweets(String employeeID, int offset, int limit) throws CustomException {
 
         List<TweetsEntity> tweetsEntityList = intweetDaoService.findTweetsByEmployeeId(employeeID, offset, limit);
         if (tweetsEntityList.isEmpty()) {
-            ErrorResponseUtil.throwEmployeeNotFoundException(employeeID);
+            ExceptionThrower exceptionThrower = new ExceptionThrower();
+            exceptionThrower.throwEmployeeNotFoundException();
         }
         return convertTweets(tweetsEntityList);
     }
 
     @Override
-    public HttpStatus postTweet(CreateTweetRequest createTweetRequest, String tweetID) {
+    public void postTweet(CreateTweetRequest createTweetRequest, String tweetID) throws CustomException {
         try {
             TweetsEntity tweetsEntity = new TweetsEntity();
             tweetsEntity.setEmployeeId(createTweetRequest.getEmployeeId());
@@ -74,53 +74,53 @@ public class IntweetServiceImpl implements IntweetService {
                 tweetsEntity.setTweetId(Integer.parseInt(tweetID));
             }
             intweetDaoService.saveTweet(tweetsEntity);
-            return HttpStatus.OK;
         } catch (DataIntegrityViolationException ex) {
-            return HttpStatus.BAD_REQUEST;
+            ExceptionThrower exceptionThrower = new ExceptionThrower();
+            exceptionThrower.throwEmployeeNotFoundException();
         }
     }
 
     @Override
-    public HttpStatus deleteTweet(String employeeID, int tweetID) {
+    public void deleteTweet(String employeeID, int tweetID) throws CustomException {
         try {
             TweetsEntityPK tweetsEntityPK = new TweetsEntityPK();
             tweetsEntityPK.setEmployeeId(employeeID);
             tweetsEntityPK.setTweetId(tweetID);
             intweetDaoService.deleteTweet(tweetsEntityPK);
-            return HttpStatus.NO_CONTENT;
         } catch (EmptyResultDataAccessException ex) {
-            return HttpStatus.NOT_FOUND;
+            ExceptionThrower exceptionThrower = new ExceptionThrower();
+            exceptionThrower.throwTweetNotFoundException();
         }
     }
 
     @Override
-    public HttpStatus followEmployee(String employeeID, String followerID) {
+    public void followEmployee(String employeeID, String followerID) throws CustomException {
         try {
             FollowersEntity followersEntity = new FollowersEntity();
             followersEntity.setEmployeeId(employeeID);
             followersEntity.setFollowerId(followerID);
             intweetDaoService.saveFollowersEntity(followersEntity);
-            return HttpStatus.OK;
         } catch (DataIntegrityViolationException ex) {
-            return HttpStatus.BAD_REQUEST;
+            ExceptionThrower exceptionThrower = new ExceptionThrower();
+            exceptionThrower.throwEmployeeNotFoundException();
         }
     }
 
     @Override
-    public HttpStatus unfollowEmployee(String employeeID, String followerID) {
+    public void unfollowEmployee(String employeeID, String followerID) throws CustomException {
         try {
             FollowersEntityPK followersEntityPK = new FollowersEntityPK();
             followersEntityPK.setEmployeeId(employeeID);
             followersEntityPK.setFollowerId(followerID);
             intweetDaoService.deleteFollower(followersEntityPK);
-            return HttpStatus.OK;
         } catch (EmptyResultDataAccessException ex) {
-            return HttpStatus.BAD_REQUEST;
+            ExceptionThrower exceptionThrower = new ExceptionThrower();
+            exceptionThrower.throwNotFollowingEmployeeException();
         }
     }
 
     @Override
-    public List<Follower> getFollowers(String employeeID) throws EmployeeNotFoundException {
+    public List<Follower> getFollowers(String employeeID) throws CustomException {
         getEmployee(employeeID);
         EmployeesEntity employeesEntity;
         List<FollowersEntity> entityList = intweetDaoService.findAllByFollowerId(employeeID);
@@ -134,24 +134,27 @@ public class IntweetServiceImpl implements IntweetService {
     }
 
     @Override
-    public List<Follower> getFollowing(String employeeID) throws EmployeeNotFoundException {
+    public Followers getFollowing(String employeeID) throws CustomException {
         getEmployee(employeeID);
         EmployeesEntity employeesEntity;
         List<FollowersEntity> entityList = intweetDaoService.findAllByFollowingId(employeeID);
         List<Follower> resultList = new ArrayList<>();
+        Followers followers = new Followers();
         for (FollowersEntity followingEntity : entityList) {
             employeesEntity = intweetDaoService.findEmployeeByEmployeeId(followingEntity.getFollowerId());
             Follower follower = setFollower(employeesEntity);
             resultList.add(follower);
         }
-        return resultList;
+        followers.setFollowers(resultList);
+        return followers;
     }
 
 
-    private void getEmployee(String employeeID) throws EmployeeNotFoundException {
+    private void getEmployee(String employeeID) throws CustomException {
         EmployeesEntity employeesEntity = intweetDaoService.findEmployeeByEmployeeId(employeeID);
         if (ObjectUtils.isEmpty(employeesEntity)) {
-            ErrorResponseUtil.throwEmployeeNotFoundException(employeeID);
+            ExceptionThrower exceptionThrower = new ExceptionThrower();
+            exceptionThrower.throwEmployeeNotFoundException();
         }
     }
 
