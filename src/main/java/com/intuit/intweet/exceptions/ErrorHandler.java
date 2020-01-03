@@ -13,6 +13,6 @@ public class ErrorHandler {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setErrorCode(e.getCode());
         errorMessage.setErrorMessage(e.getMessage());
-        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 }

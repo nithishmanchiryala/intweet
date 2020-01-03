@@ -22,4 +22,11 @@ public class ExceptionThrower {
         exception.setMessage("Not following or the employee not found");
         throw exception;
     }
+
+    public void throwBadRequestException() throws CustomException {
+        CustomException exception = new CustomException();
+        exception.setCode(400);
+        exception.setMessage("You cannot follow yourself!!");
+        throw exception;
+    }
 }

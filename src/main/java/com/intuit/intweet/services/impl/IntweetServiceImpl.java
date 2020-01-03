@@ -95,6 +95,10 @@ public class IntweetServiceImpl implements IntweetService {
 
     @Override
     public void followEmployee(String employeeID, String followerID) throws CustomException {
+        if (employeeID.equalsIgnoreCase(followerID)) {
+            ExceptionThrower exceptionThrower = new ExceptionThrower();
+            exceptionThrower.throwBadRequestException();
+        }
         try {
             FollowersEntity followersEntity = new FollowersEntity();
             followersEntity.setEmployeeId(employeeID);

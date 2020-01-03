@@ -201,7 +201,7 @@ class IntweetResourceTest {
     public void followEmployeeTest() throws CustomException {
         FollowersEntity followersEntity = new FollowersEntity();
         Mockito.when(followerRepository.save(Matchers.anyObject())).thenReturn(followersEntity);
-        intweetResource.followEmployee("1234", "1234");
+        intweetResource.followEmployee("1234", "2345");
     }
 
     @Test
@@ -214,7 +214,7 @@ class IntweetResourceTest {
     public void followEmployeeTest_Exception() {
         Mockito.when(followerRepository.save(Matchers.anyObject())).thenThrow(DataIntegrityViolationException.class);
         try {
-            intweetResource.followEmployee("1234", "1234");
+            intweetResource.followEmployee("1234", "3456");
         } catch (CustomException e) {
             Assert.assertEquals(404, e.getCode());
         }
