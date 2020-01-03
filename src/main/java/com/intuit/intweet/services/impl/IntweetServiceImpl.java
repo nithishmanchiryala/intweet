@@ -59,8 +59,7 @@ public class IntweetServiceImpl implements IntweetService {
 
         List<TweetsEntity> tweetsEntityList = intweetDaoService.findTweetsByEmployeeId(employeeID, offset, limit);
         if (tweetsEntityList.isEmpty()) {
-            ExceptionThrower exceptionThrower = new ExceptionThrower();
-            exceptionThrower.throwEmployeeNotFoundException();
+            throwEmployeeNotFoundException();
         }
         return convertTweets(tweetsEntityList);
     }
@@ -76,8 +75,7 @@ public class IntweetServiceImpl implements IntweetService {
             }
             intweetDaoService.saveTweet(tweetsEntity);
         } catch (DataIntegrityViolationException ex) {
-            ExceptionThrower exceptionThrower = new ExceptionThrower();
-            exceptionThrower.throwEmployeeNotFoundException();
+            throwEmployeeNotFoundException();
         }
     }
 
@@ -107,8 +105,7 @@ public class IntweetServiceImpl implements IntweetService {
             followersEntity.setCreatedDatetime(new Date());
             intweetDaoService.saveFollowersEntity(followersEntity);
         } catch (DataIntegrityViolationException ex) {
-            ExceptionThrower exceptionThrower = new ExceptionThrower();
-            exceptionThrower.throwEmployeeNotFoundException();
+            throwEmployeeNotFoundException();
         }
     }
 
@@ -161,8 +158,7 @@ public class IntweetServiceImpl implements IntweetService {
     private void getEmployee(String employeeID) throws CustomException {
         EmployeesEntity employeesEntity = intweetDaoService.findEmployeeByEmployeeId(employeeID);
         if (ObjectUtils.isEmpty(employeesEntity)) {
-            ExceptionThrower exceptionThrower = new ExceptionThrower();
-            exceptionThrower.throwEmployeeNotFoundException();
+            throwEmployeeNotFoundException();
         }
     }
 
@@ -183,6 +179,11 @@ public class IntweetServiceImpl implements IntweetService {
         follower.setFirstName(employeesEntity.getFirstName());
         follower.setLastName(employeesEntity.getLastName());
         return follower;
+    }
+
+    private void throwEmployeeNotFoundException() throws CustomException {
+        ExceptionThrower exceptionThrower = new ExceptionThrower();
+        exceptionThrower.throwEmployeeNotFoundException();
     }
 
     @SuppressWarnings("unused")
