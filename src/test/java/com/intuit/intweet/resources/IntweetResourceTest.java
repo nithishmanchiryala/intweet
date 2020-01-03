@@ -309,7 +309,6 @@ class IntweetResourceTest {
         employeesEntity.setLastName("Stark");
         employeesEntity.setCreatedDatetime(new Date());
         employeesEntity.setLastModifiedDatetime(new Date());
-        employeesEntity.setUidpk(1234);
         employeesEntity.getEmployeeId();
         employeesEntity.getFirstName();
         employeesEntity.getLastName();

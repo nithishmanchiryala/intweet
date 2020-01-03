@@ -25,15 +25,14 @@ DROP TABLE IF EXISTS `employees`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `employees` (
-  `uidpk` int(11) NOT NULL AUTO_INCREMENT,
   `employee_id` varchar(20) NOT NULL,
   `first_name` varchar(20) NOT NULL,
   `last_name` varchar(20) NOT NULL,
   `created_datetime` datetime NOT NULL,
   `last_modified_datetime` datetime NOT NULL,
-  PRIMARY KEY (`uidpk`),
+  PRIMARY KEY (`employee_id`),
   UNIQUE KEY `employee_id_UNIQUE` (`employee_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
