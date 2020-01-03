@@ -54,6 +54,7 @@ DROP TABLE IF EXISTS `followers`;
 CREATE TABLE `followers` (
   `employee_id` varchar(20) NOT NULL,
   `follower_id` varchar(20) NOT NULL,
+  `created_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`employee_id`,`follower_id`),
   KEY `follower_id_idx` (`employee_id`),
   KEY `employee_fk_4_idx` (`follower_id`),

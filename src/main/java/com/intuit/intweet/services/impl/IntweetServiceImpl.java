@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -103,6 +104,7 @@ public class IntweetServiceImpl implements IntweetService {
             FollowersEntity followersEntity = new FollowersEntity();
             followersEntity.setEmployeeId(employeeID);
             followersEntity.setFollowerId(followerID);
+            followersEntity.setCreatedDatetime(new Date());
             intweetDaoService.saveFollowersEntity(followersEntity);
         } catch (DataIntegrityViolationException ex) {
             ExceptionThrower exceptionThrower = new ExceptionThrower();
