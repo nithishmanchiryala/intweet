@@ -13,6 +13,8 @@ import com.intuit.intweet.models.response.Tweets;
 import com.intuit.intweet.services.IntweetService;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -29,6 +31,8 @@ import java.util.stream.Collectors;
 @Service
 public class IntweetServiceImpl implements IntweetService {
 
+    private static final Logger logger = LoggerFactory.getLogger(IntweetServiceImpl.class);
+
     @Autowired
     private IntweetDaoService intweetDaoService;
 
@@ -36,13 +40,14 @@ public class IntweetServiceImpl implements IntweetService {
     private ConversionService conversionService;
 
     @Override
-    @HystrixCommand(fallbackMethod = "getLatestTweets_Fallback")
+    @HystrixCommand(fallbackMethod = "getTweets_Fallback")
     public Tweets getLatestTweets(int offset, int limit) {
         Page<TweetsEntity> tweetsEntityList = intweetDaoService.findByCriteria(null, offset, limit);
         return convertTweets(tweetsEntityList.getContent());
     }
 
     @Override
+    @HystrixCommand(fallbackMethod = "getTweets_Fallback")
     public Tweets getTweets(String employeeID, int offset, int limit) throws CustomException {
         getEmployee(employeeID);
 
@@ -55,6 +60,7 @@ public class IntweetServiceImpl implements IntweetService {
     }
 
     @Override
+    @HystrixCommand(fallbackMethod = "getTweets_Fallback")
     public Tweets getEmployeeTweets(String employeeID, int offset, int limit) throws CustomException {
 
         List<TweetsEntity> tweetsEntityList = intweetDaoService.findTweetsByEmployeeId(employeeID, offset, limit);
@@ -187,7 +193,8 @@ public class IntweetServiceImpl implements IntweetService {
     }
 
     @SuppressWarnings("unused")
-    private Tweets getLatestTweets_Fallback(int offset, int limit) {
+    private Tweets getTweets_Fallback(int offset, int limit) {
+        logger.info("Get tweets api is down, circuit opened");
         return new Tweets();
     }
 
