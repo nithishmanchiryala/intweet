@@ -193,7 +193,7 @@ public class IntweetServiceImpl implements IntweetService {
     }
 
     @SuppressWarnings("unused")
-    private Tweets getTweets_Fallback(int offset, int limit) {
+    public Tweets getTweets_Fallback(int offset, int limit) {
         logger.info("Get tweets api is down, circuit opened");
         return new Tweets();
     }

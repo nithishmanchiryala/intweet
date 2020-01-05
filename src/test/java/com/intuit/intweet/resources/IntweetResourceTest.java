@@ -34,7 +34,6 @@ import java.util.Date;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.anyString;
 
 @RunWith(SpringRunner.class)
