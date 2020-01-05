@@ -4,6 +4,7 @@ import com.intuit.intweet.dao.entity.*;
 import com.intuit.intweet.dao.repository.EmployeeRepository;
 import com.intuit.intweet.dao.repository.FollowerRepository;
 import com.intuit.intweet.dao.repository.TweetRepository;
+import com.intuit.intweet.dto.TweetsEntityWrapper;
 import com.intuit.intweet.exceptions.CustomException;
 import com.intuit.intweet.models.request.CreateTweetRequest;
 import com.intuit.intweet.models.response.Follower;
@@ -33,6 +34,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.anyString;
 
 @RunWith(SpringRunner.class)
@@ -205,6 +207,17 @@ class IntweetResourceTest {
     }
 
     @Test
+    public void followEmployeeTest_Failure() throws CustomException {
+        FollowersEntity followersEntity = new FollowersEntity();
+        Mockito.when(followerRepository.save(Matchers.anyObject())).thenReturn(followersEntity);
+        try {
+            intweetResource.followEmployee("1234", "1234");
+        } catch (CustomException e) {
+            Assert.assertEquals(400, e.getCode());
+        }
+    }
+
+    @Test
     public void unfollowEmployeeTest() throws CustomException {
         Mockito.doNothing().when(followerRepository).deleteById(isA(FollowersEntityPK.class));
         intweetResource.unfollowEmployee("1234", "1234");
@@ -235,6 +248,7 @@ class IntweetResourceTest {
         FollowersEntity followersEntity = new FollowersEntity();
         followersEntity.setFollowerId("1234");
         followersEntity.setEmployeeId("2345");
+        followersEntity.getCreatedDatetime();
         TweetsEntity tweetsEntity = new TweetsEntity();
         CreateTweetRequest createTweetRequest = new CreateTweetRequest();
         createTweetRequest.setEmployeeId("1234");
@@ -315,6 +329,29 @@ class IntweetResourceTest {
         employeesEntity.getCreatedDatetime();
         employeesEntity.getFollowersByEmployeeId();
         employeesEntity.getTweetsByEmployeeId();
+        employeesEntity.getLastModifiedDatetime();
+
+        TweetsEntityPK tweetsEntityPK = new TweetsEntityPK();
+        tweetsEntityPK.setEmployeeId("394738");
+        tweetsEntityPK.setTweetId(123);
+        tweetsEntityPK.getEmployeeId();
+        tweetsEntityPK.getTweetId();
+        tweetsEntityPK.hashCode();
+        tweetsEntityPK.equals(tweetsEntityPK);
+        tweetsEntityPK.equals(null);
+        tweetsEntityPK.equals(new ArrayList());
+        TweetsEntityPK tweetsEntityPK1 = new TweetsEntityPK();
+        tweetsEntityPK1.setEmployeeId("394738");
+        tweetsEntityPK1.setTweetId(123);
+        tweetsEntityPK.equals(tweetsEntityPK1);
+        tweetsEntityPK1.setEmployeeId("3947d38");
+        tweetsEntityPK1.setTweetId(123);
+        tweetsEntityPK.equals(tweetsEntityPK1);
+        tweetsEntityPK1.setEmployeeId("394738");
+        tweetsEntityPK1.setTweetId(1234);
+        tweetsEntityPK.equals(tweetsEntityPK1);
+        tweetsEntityPK.getEmployeeId();
+        tweetsEntityPK.getTweetId();
 
         FollowersEntityPK followersEntityPK = new FollowersEntityPK();
         followersEntityPK.setEmployeeId("357438924");
@@ -335,6 +372,7 @@ class IntweetResourceTest {
         followersEntityPK1.setFollowerId("564546c565");
         followersEntityPK.equals(followersEntityPK1);
         followersEntityPK.getFollowerId();
+
         TweetsEntity tweetsEntity = new TweetsEntity();
         Date date = new Date();
         tweetsEntity.setTweetId(1234);
@@ -385,6 +423,9 @@ class IntweetResourceTest {
         tweetsEntity1.setCreatedDatetime(date);
         tweetsEntity1.setLastModifiedDatetime(new Date());
         tweetsEntity.equals(tweetsEntity1);
+
+        TweetsEntityWrapper tweetsEntityWrapper = new TweetsEntityWrapper();
+        tweetsEntityWrapper.setTweetsEntity(tweetsEntity);
     }
 
     @Test
@@ -397,6 +438,7 @@ class IntweetResourceTest {
         Tweet tweet = new Tweet();
         tweet.getTweetId();
         tweet.getTweet();
+        tweet.getEmployeeId();
 
         Tweets tweets = new Tweets();
         tweets.getTweets();
