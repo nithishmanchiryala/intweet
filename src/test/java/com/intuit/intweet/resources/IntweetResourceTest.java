@@ -11,6 +11,7 @@ import com.intuit.intweet.models.response.Follower;
 import com.intuit.intweet.models.response.Followers;
 import com.intuit.intweet.models.response.Tweet;
 import com.intuit.intweet.models.response.Tweets;
+import com.intuit.intweet.services.impl.IntweetServiceImpl;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.jupiter.api.Test;
@@ -117,6 +118,7 @@ class IntweetResourceTest {
     @Test
     public void getEmployeeTweetsTest_Failure() {
         List<TweetsEntity> tweetsEntityList = new ArrayList<>();
+        getTweets_Fallback();
         Mockito.when(tweetRepository.findByEmployeeId(anyString(), Matchers.anyObject())).thenReturn(tweetsEntityList);
         try {
             Tweets tweetsResponseEntity = intweetResource.getMyTweets("38473894", 0, 5);
@@ -441,6 +443,11 @@ class IntweetResourceTest {
 
         Tweets tweets = new Tweets();
         tweets.getTweets();
+    }
+
+    private void getTweets_Fallback() {
+        IntweetServiceImpl mockIntweetServiceImpl = Mockito.mock(IntweetServiceImpl.class);
+        Mockito.when(mockIntweetServiceImpl.getTweets_Fallback(Matchers.anyString(), Matchers.anyInt(), Matchers.anyInt())).thenReturn(new Tweets());
     }
 
 }
