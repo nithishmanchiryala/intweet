@@ -26,7 +26,7 @@ public class ExceptionThrower {
     public void throwBadRequestException() throws CustomException {
         CustomException exception = new CustomException();
         exception.setCode(400);
-        exception.setMessage("You cannot follow yourself!!");
+        exception.setMessage("You cannot follow yourself");
         throw exception;
     }
 }
