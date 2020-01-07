@@ -49,7 +49,6 @@ public class IntweetResource {
     @GetMapping("/followers/{employeeID}")
     public Followers getFollowers(@PathVariable String employeeID) throws CustomException {
         return intweetService.getFollowers(employeeID);
-
     }
 
     @DeleteMapping("/follow/{employeeID}/{followerID}")
