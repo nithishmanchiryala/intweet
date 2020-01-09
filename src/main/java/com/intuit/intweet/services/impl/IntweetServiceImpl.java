@@ -188,19 +188,20 @@ public class IntweetServiceImpl implements IntweetService {
     }
 
     private void throwEmployeeNotFoundException() throws CustomException {
+        logger.error("Employee not found");
         ExceptionThrower exceptionThrower = new ExceptionThrower();
         exceptionThrower.throwEmployeeNotFoundException();
     }
 
     @SuppressWarnings("unused")
     public Tweets getTweets_Fallback(int offset, int limit) {
-        logger.info("Get tweets api is down, circuit opened");
+        logger.error("Get tweets api is down, circuit opened");
         return new Tweets();
     }
 
     @SuppressWarnings("unused")
     public Tweets getTweets_Fallback(String employeeID, int offset, int limit) {
-        logger.info("Get tweets api is down, circuit opened");
+        logger.error("Get tweets api is down, circuit opened");
         return new Tweets();
     }
 }
